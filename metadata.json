@@ -1,0 +1,7 @@
+{
+  "name": "The Career Path",
+  "description": "A comprehensive career guidance platform for Ghanaian students to explore professions, discover talents, and build their future.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
