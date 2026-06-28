@@ -1,5 +1,5 @@
 <div align="center">
-![image alt] (image url)
+![image alt] ()
  </div>  
 
 
