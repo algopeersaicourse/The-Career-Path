@@ -3,25 +3,34 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CareerChatService } from '../services/geminiService';
 import { ChatMessage } from '../types';
 
-const ChatInterface: React.FC = () => {
+interface ChatInterfaceProps {
+  initialQuery?: string;
+  onClearInitialQuery?: () => void;
+}
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialQuery, onClearInitialQuery }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  // Fix: Added 'const' to declare chatServiceRef inside the component
   const chatServiceRef = useRef<CareerChatService | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Fix: chatServiceRef.current is now correctly scoped
+  // Lazy initialize service synchronously so it is ready immediately
+  if (!chatServiceRef.current) {
     chatServiceRef.current = new CareerChatService();
-    // Welcome message
-    setMessages([
-      {
-        role: 'model',
-        text: "Akwaaba! I am your Career Path Guide. Whether you're curious about university entry requirements or the best professions in Ghana, I'm here to help. What's on your mind today?",
-        timestamp: new Date()
-      }
-    ]);
+  }
+
+  useEffect(() => {
+    // Welcome message if not loaded
+    if (messages.length === 0) {
+      setMessages([
+        {
+          role: 'model',
+          text: "Hi there! 👋 Welcome to The Career Path Ghana!\n\nI am your ChatGPT-powered AI Career Counselor. I'm here to help you navigate your academic journey, discover modern high-growth professions, and plan your professional legacy in Ghana.\n\nFeel free to ask me anything about college courses, career paths, top-tier universities, or industry insights. How can I help you today?",
+          timestamp: new Date()
+        }
+      ]);
+    }
   }, []);
 
   useEffect(() => {
@@ -30,22 +39,24 @@ const ChatInterface: React.FC = () => {
     }
   }, [messages, isTyping]);
 
-  const handleSend = async () => {
-    if (!input.trim() || !chatServiceRef.current) return;
+  const handleSend = async (messageText?: string) => {
+    const textToSend = messageText || input;
+    if (!textToSend.trim() || !chatServiceRef.current) return;
 
     const userMessage: ChatMessage = {
       role: 'user',
-      text: input,
+      text: textToSend,
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    if (!messageText) {
+      setInput('');
+    }
     setIsTyping(true);
 
     try {
-      // Fix: chatServiceRef.current is correctly referenced
-      const result = await chatServiceRef.current.sendMessage(input);
+      const result = await chatServiceRef.current.sendMessage(textToSend);
       const modelMessage: ChatMessage = {
         role: 'model',
         text: result.text,
@@ -59,6 +70,13 @@ const ChatInterface: React.FC = () => {
       setIsTyping(false);
     }
   };
+
+  useEffect(() => {
+    if (initialQuery && chatServiceRef.current) {
+      handleSend(initialQuery);
+      onClearInitialQuery?.();
+    }
+  }, [initialQuery]);
 
   return (
     <div className="flex flex-col h-[700px] bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 animate-in slide-in-from-bottom-4 duration-500">

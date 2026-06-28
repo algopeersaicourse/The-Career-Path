@@ -1,17 +1,14 @@
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 
 const SYSTEM_INSTRUCTION = `
-You are "The Career Path Counselor", an expert AI career guide specifically for students in Ghana. 
-Your goal is to help Junior High, Senior High, and University students discover their career paths based on their talents and the local job market.
+You are "The Career Path Counselor", an exceptionally helpful, professional, and conversational AI career intelligence assistant styled in the spirit of ChatGPT, designed specifically for students in Ghana.
 
-Context for Ghana:
-- You know about WASSCE, BECE, and the Free SHS system.
-- You are familiar with top universities like KNUST (Kumasi), University of Ghana (Legon), UCC (Cape Coast), Ashesi, UPSA, and UENR.
-- You understand current job market trends in Ghana: FinTech in Accra, modern Agribusiness, renewable energy, mining, and the creative industry boom.
-- Provide advice that is culturally relevant, encouraging, and highly practical.
-- Use Google Search to find current internship opportunities, recent scholarship announcements in Ghana, or new degree programs.
-- If a student mentions their grades (e.g., aggregate 12), suggest courses they might qualify for at top universities.
-- Always be polite, professional, and helpful.
+Core Directives on Style & Persona (Answer like ChatGPT):
+- **Structured and Detailed Responses:** Break down complex topics into clear markdown headers, bold bullet points, and actionable numbered steps. Feel free to explain concepts thoroughly, provide background context, and detail strategic pathways.
+- **Supportive and Professional Tone:** Speak with high emotional intelligence, professional empathy, and encouraging clarity. Frame advice as actionable masterclasses or strategic career roadmaps.
+- **Ghanaian Employment Context:** Focus your mentoring on top Ghanaian institutions (e.g., University of Ghana (Legon), KNUST, UCC, Ashesi, UPSA, UENR, Academic City), active industrial opportunities (Accra's Tech & FinTech scene, Agribusiness export, Creative Arts & Design, Mineral Engineering), and emerging career disciplines.
+- **NO standardized exam stress:** NEVER refer to WASSCE, BECE, or stress-inducing high school grade aggregate points. Do not prompt users for aggregate scores or results. Instead, ask about their favorite high school academic electives or broad streams (e.g., General Science, Visual Arts, General Arts, Business) or academic interests.
+- **Active search & Grounding:** Leverage search results to find current scholarship timelines, real internship opportunities, and new degree programs in Ghana.
 `;
 
 /**
@@ -22,35 +19,53 @@ Context for Ghana:
 function getHeuristicCareerGuidance(message: string): { text: string; sources: any[] } {
   const query = message.toLowerCase().trim();
 
-  // 1. WASSCE, BECE, Grades, Aggregates, Admissions
+  // 1. High School Tracks, University Courses, and General Admissions (No WASSCE)
   if (
     query.includes("grade") || 
-    query.includes("wassce") || 
-    query.includes("bece") || 
-    query.includes("aggregate") || 
     query.includes("admission") || 
     query.includes("requirement") ||
-    query.includes("shs") ||
-    /\b\d{1,2}\b/.test(query) // Mentions numerical aggregates
+    query.includes("university") ||
+    query.includes("college") ||
+    query.includes("course") ||
+    query.includes("study") ||
+    query.includes("track") ||
+    query.includes("elective")
   ) {
     return {
-      text: `Academic qualifications are the key entry gateways to tertiary education in Ghana. Here is a definitive guide to help you navitgate your grades:
+      text: `Hello! Let's explore university programs and career choices in Ghana together. Researching tertiary entry pathways is the first step toward building a successful legacy, and doing this in a structured, strategic way is critical!
 
-1. **WASSCE Grading Scale:**
-   - **A1** (Excellent, 1) through **C6** (Credit, 6) are the passing grades accepted for direct Bachelor's degree admissions.
-   - Grades **D7**, **E8**, and **F9** do not qualify for direct public university degree entries, but are eligible for premium **Diploma streams**, technical colleges, or certificate pathways.
-   - For most Bachelor's courses at **University of Ghana (Legon)** or **KNUST**, you need passes (A1–C6) in 3 Core subjects (Core Math, English, Integrated Science or Social Studies) and 3 Elective subjects related to your course.
+Choosing the right course in Ghana is typically aligned with your High School elective tracks (such as General Science, General Arts, Business, or Visual Arts). Here is a comprehensive career-matching guide for these tracks:
 
-2. **Aggregates Logic:**
-   - Your aggregate is calculated by adding the numerical values of your best 3 core subjects and best 3 electives. Lower sums represent higher performance (e.g., Aggregate 6 is the perfect score).
-   - **Aggregate 6–15:** Extremely competitive. Qualifies you for top-tier courses like Medicine, Law, BSc. Computer Science, Actuarial Science, or Civil Engineering.
-   - **Aggregate 16–24:** Excellent placement. Well-positioned for Nursing, Agribusiness, Business Administration, Graphic Design, or Information Technology.
-   - **Aggregate 25–36:** Ideal for standard undergraduate courses, vocational training colleges, teacher training, or premium applied Diplomas.
+### 🌟 1. General Science Track
+If you have a strong background in science and mathematics, there are multiple high-value pathways open to you:
+- **Engineering & Tech:** Consider pursuing **BSc. Computer Engineering**, **Software Engineering**, or **Civil Engineering** at specialized institutions such as **KNUST** or **Ashesi University**.
+- **Clinical Sciences:** Professional degree tracks in **Medicine (MBChB)**, **Doctor of Pharmacy (PharmD)**, or **BSc. Nursing** at the **University of Ghana (Legon)** or **UCC** are excellent choices for medical leadership.
+- **Agribusiness & Applied Sciences:** Fields like **BSc. Biotechnology** or **Agribusiness Management** open the door to modern, tech-driven resource management.
 
-Would you like me to recommend a specific university course based on your electives or current aggregate?`,
+### 🎨 2. Visual Arts & Creative Tracks
+Ghana is witnessing a massive boom in the creative industry:
+- **Design & Architecture:** The premium route is **BSc. Architecture** or **BSc. Development Planning** at **KNUST**.
+- **Multimedia & Film:** Specialized tracks like **Film Directing**, **Animation**, or **Digital Communications** at **UniMAC / NAFTI** or **Academic City** are incredibly in-demand.
+
+### 💼 3. Business & Commerce Tracks
+Highly coveted corporate paths for analytical and organization-oriented minds:
+- **Corporate Accounting & Auditing:** Pursuing a **BSc. Accounting** or **BSc. Finance** at **UPSA** (premier for professional courses) or **UG Business School** sets a solid foundation. *Tip: Pairing this degree with professional charters (like ICAG or ACCA) early on is highly recommended.*
+- **E-Commerce & Management:** **BSc. Business Administration** with a dual focus on digital marketing or logistics.
+
+### 📚 4. General Arts Track
+An incredibly versatile track leading to high-impact societal and leadership roles:
+- **Law & Public Policy:** Pursuing a Bachelor of Laws (LLB) at **UG** or **GIMPA**, leading to professional legal practice.
+- **Modern Languages & Communications:** High-demand translation, international relations, and corporate communications roles.
+
+**💡 Step-by-Step Strategic Advice:**
+1. **Choose Your Core Area of Passion:** Identify if you are more of an Analyst, Builder, or Caregiver.
+2. **Review University Admission Timelines:** Check UG, KNUST, and UCC portals between February and June each year for current entry brochures.
+3. **Verify Program Accreditations:** Always ensure your chosen university program is fully certified by the **Ghana Tertiary Education Commission (GTEC)**.
+
+Would you like to focus on a particular university, or would you like to explore matching courses for your favorite high school subjects?`,
       sources: [
-        { web: { title: "University of Ghana Portal", uri: "https://admission.ug.edu.gh" } },
-        { web: { title: "KNUST Admissions Requirements", uri: "https://www.knust.edu.gh/admissions" } }
+        { web: { title: "Ghana Tertiary Education Commission (GTEC)", uri: "https://gtec.edu.gh" } },
+        { web: { title: "University of Ghana Admissions", uri: "https://admission.ug.edu.gh" } }
       ]
     };
   }
@@ -71,7 +86,7 @@ Would you like me to recommend a specific university course based on your electi
     return {
       text: `Technology and software engineering represent one of the fastest-growing and highest-paying career sectors in Ghana today!
 
-### Recommend Tertiary Courses:
+### Recommended Tertiary Courses:
 - **BSc. Computer Science / BSc. Computer Engineering** (Premier programs at **KNUST** and **Ashesi University**).
 - **BSc. Information Technology** (Available at **GCTU** and **Academic City University College**).
 
@@ -80,7 +95,7 @@ Would you like me to recommend a specific university course based on your electi
 2. **Bankable Skills to Learn:** Build proficiency in JavaScript/TypeScript (React, Node.js), Python (for Analytics and AI), or Flutter/React Native (for mobile apps, which are highly dominant as African markets are mobile-first).
 3. **API Integrations:** Mastering mobile payment frameworks and Mobile Money (MoMo) API integrations makes you incredibly marketable to Ghanaian businesses and startups.
 
-Starting a GitHub portfolio and contributing to open-source project lines early will set you apart from other graduates. Are you more drawn to software development, cybersecurity, or data analytics?`,
+Starting a GitHub portfolio and contributing to open-source projects early will set you apart from other graduates. Are you more drawn to software development, cybersecurity, or data analytics?`,
       sources: [
         { web: { title: "Ashesi University Computer Science", uri: "https://www.ashesi.edu.gh" } },
         { web: { title: "Ghana Communication Technology University", uri: "https://gctu.edu.gh" } }
@@ -107,7 +122,7 @@ Starting a GitHub portfolio and contributing to open-source project lines early 
 
 ### Strategic Areas of Opportunity:
 1. **Agri-Tech Platforms:** Startups specializing in IoT sensors, drone surveillance, mechanized lease markets, and mobile payment platforms connecting rural farms to urban markets.
-2. **Food Processing & Brand Export:** Producing premium, retail-ready locally packaged brands (like Ghanaian chocolate, organic shea butter, and spices) instead of exporting raw materials. This adds massive value to local communities.
+2. **Food Processing & Brand Export:** Producing retail-ready, locally packaged brands (like Ghanaian chocolate, organic shea butter, and spices) instead of exporting raw materials. This adds massive value to local communities.
 3. **Modern Greenhouses:** Greenhouses and drip-irrigation systems are highly profitable ventures for year-round cash crop production (tomatoes, exotic peppers).
 
 Are you interested in the scientific crop management side, mechanical farm engineering, or agribusiness trade and export?`,
@@ -139,7 +154,7 @@ Are you interested in the scientific crop management side, mechanical farm engin
 - **Doctor of Pharmacy (PharmD):** Top-tier professional programs at **KNUST** and **UG**.
 
 ### Essential Sector Realities:
-1. **Professional Registration:** To practice, you must sit for and pass licencing exams with the **Nurses and Midwifery Council (NMC)** of Ghana, or the **Medical and Dental Council (MDC)**.
+1. **Professional Registration:** To practice, you must sit for and pass licensing exams with the **Nurses and Midwifery Council (NMC)** of Ghana, or the **Medical and Dental Council (MDC)**.
 2. **Mandatory Rotations:** Following graduation, you will complete a structured housemanship or clinical residency before receiving official public posting or stepping into the private sector.
 3. **Emerging Fields:** Public health management, biomedical engineering, and digital health startups are creating exciting alternative careers.
 
@@ -204,7 +219,7 @@ What specific creative medium inspires you the most — digital animation, struc
 - **University of Ghana Business School (UGBS):** Celebrated for finance, marketing, and human resource management.
 - **UCC School of Business:** Outstanding for commerce, enterprise, and management.
 
-### Key Careers Requirements:
+### Key Career Requirements:
 1. **Professional Credentials:** Getting your Bachelor's degree is useful, but completing professional exams like **ICAG (Institute of Chartered Accountants, Ghana)** or **ACCA** is what truly positions you for leadership and rapid income growth.
 2. **The Job Market:** Banks, FinTech leaders, corporate agencies, and accounting firms (PwC, EY, Deloitte, KPMG) in Accra's Central Business District actively look for credentialed analysts and auditors.
 
@@ -230,7 +245,7 @@ Would you like advice on mapping out ICAG vs. ACCA, or landing your first financ
       text: `Securing scholarship sponsorships and practical workplace internships is an incredibly effective way to build your CV early:
 
 1. **National Scholarships & Support:**
-   - **Ghana Scholarship Secretariat:** A dedicated government body that offers applications for local tuition support and bilateral international fellowships for WASSCE graduates and undergraduates.
+   - **Ghana Scholarship Secretariat:** A dedicated government body that offers applications for local tuition support and bilateral international fellowships for high school graduates and university students.
    - **GETFund (Ghana Education Trust Fund):** Distributes essential funding support to students specializing in science, mathematics, and high-impact vocational routes.
 
 2. **Corporate Placements:**
@@ -238,7 +253,7 @@ Would you like advice on mapping out ICAG vs. ACCA, or landing your first financ
    - Accra's creative networks (like MEST, iSpace) provide early-access product management and tech internship placements.
 
 3. **In-Demand Fellowships:**
-   - The Mastercard Foundation Scholars Program has magnificent, fully-funded collaborations with **Ashesi University** and **KNUST** targeting high-performing student lines.
+   - The Mastercard Foundation Scholars Program has magnificent, fully-funded collaborations with **Ashesi University** and **KNUST** targeting high-performing students.
 
 Would you like more details on crafting standard application letters or compiling your academic portfolios?`,
       sources: [
@@ -255,7 +270,7 @@ Would you like more details on crafting standard application letters or compilin
 Here are three excellent things you can do next right here in our app:
 1. **Take the 2-Minute Talent Quiz:** Click **Talent Quiz** in the top navigation to determine your central archetype (Builder, Creator, Analyst, Leader, or Caregiver).
 2. **Browse our Discoveries:** Go to the **Discoveries** library to find specific details, university qualifications, and growth potentials for 10+ modern careers in Ghana.
-3. **Ask specialized questions:** Ask me about WASSCE aggregates, KNUST admission forms, learning how to code in Accra, or agribusiness strategies!
+3. **Ask specialized questions:** Ask me about KNUST admission forms, learning how to code in Accra, professional certifications, or agribusiness strategies!
 
 Tell me a bit more about your favorite school subjects or interests, and I can suggest matching career paths!`,
     sources: [

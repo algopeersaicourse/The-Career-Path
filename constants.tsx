@@ -8,16 +8,32 @@ export interface Proverb {
 
 export const DAILY_PROVERBS: Proverb[] = [
   {
-    text: "Knowledge is like a garden: if it is not cultivated, it cannot be harvested.",
-    author: "Traditional Ghanaian Wisdom"
+    text: "Education is the most powerful weapon which you can use to change the world.",
+    author: "Nelson Mandela"
   },
   {
-    text: "One who follows the path of his elders does not get lost in the forest.",
-    author: "Akan Proverb"
+    text: "It always seems impossible until it's done.",
+    author: "Nelson Mandela"
   },
   {
-    text: "The ruin of a nation begins in the homes of its people.",
-    author: "Ashanti Proverb"
+    text: "The greatest glory in living lies not in never falling, but in rising every time we fall.",
+    author: "Nelson Mandela"
+  },
+  {
+    text: "The best way to predict your future is to create it.",
+    author: "Peter Drucker"
+  },
+  {
+    text: "Your time is limited, so don't waste it living someone else's life.",
+    author: "Steve Jobs"
+  },
+  {
+    text: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+    author: "Winston Churchill"
+  },
+  {
+    text: "Do not judge me by my successes, judge me by how many times I fell down and got back up again.",
+    author: "Nelson Mandela"
   },
   {
     text: "Knowledge is power. Information is liberating. Education is the premise of progress.",
@@ -28,24 +44,8 @@ export const DAILY_PROVERBS: Proverb[] = [
     author: "Kwame Nkrumah"
   },
   {
-    text: "If you understand the beginning well, the end will not trouble you.",
-    author: "Ewe Proverb"
-  },
-  {
-    text: "God gives nothing to those who keep their arms crossed.",
-    author: "Akan Proverb"
-  },
-  {
-    text: "Education is a human right with immense power to transform.",
-    author: "Kofi Annan"
-  },
-  {
-    text: "The path of the heart is the path of the soul.",
-    author: "Ga Proverb"
-  },
-  {
-    text: "When you follow in the path of your father, you learn to walk like him.",
-    author: "Ashanti Proverb"
+    text: "The only limit to our realization of tomorrow will be our doubts of today.",
+    author: "Franklin D. Roosevelt"
   }
 ];
 

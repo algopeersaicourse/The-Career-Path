@@ -6,11 +6,15 @@ import CareerCard from './components/CareerCard';
 import ChatInterface from './components/ChatInterface';
 import TalentQuiz from './components/TalentQuiz';
 import CareerDetail from './components/CareerDetail';
+import { ImageGenerator } from './components/ImageGenerator';
+import { Sparkles, Quote } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'home' | 'quiz' | 'result' | 'careers' | 'chat'>('home');
+  const [view, setView] = useState<'home' | 'quiz' | 'result' | 'careers' | 'chat' | 'vision'>('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userArchetype, setUserArchetype] = useState<TalentArchetype | null>(null);
   const [selectedCareer, setSelectedCareer] = useState<Career | null>(null);
+  const [activeChatQuery, setActiveChatQuery] = useState<string | null>(null);
 
   // Logic to select a daily proverb based on the current date
   const dailyProverb = useMemo(() => {
@@ -31,7 +35,10 @@ const App: React.FC = () => {
 
   const NavItem = ({ label, target, active }: { label: string, target: typeof view, active: boolean }) => (
     <button 
-      onClick={() => setView(target)}
+      onClick={() => {
+        setView(target);
+        setMobileMenuOpen(false);
+      }}
       className={`px-4 py-2 rounded-lg transition-all text-sm font-bold ${
         active ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
       }`}
@@ -71,28 +78,85 @@ const App: React.FC = () => {
             <NavItem label="Home" target="home" active={view === 'home'} />
             <NavItem label="Discoveries" target="careers" active={view === 'careers'} />
             <NavItem label="AI Counselor" target="chat" active={view === 'chat'} />
+            <NavItem label="Vision Board" target="vision" active={view === 'vision'} />
             <div className="w-px h-6 bg-slate-200 mx-2"></div>
             <button 
-              onClick={() => setView('quiz')}
+              onClick={() => {
+                setView('quiz');
+                setMobileMenuOpen(false);
+              }}
               className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-6 py-2.5 rounded-xl font-black text-sm shadow-md transition-all active:scale-95"
             >
               Talent Quiz
             </button>
           </div>
 
-          <button className="lg:hidden p-2 text-slate-900">
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 text-slate-900 focus:outline-none"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              )}
             </svg>
           </button>
         </div>
       </nav>
+
+      {/* Mobile Menu Backdrop & Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-y-0 inset-x-0 z-[100] bg-slate-900/50 backdrop-blur-sm lg:hidden uppercase text-xs" onClick={() => setMobileMenuOpen(false)}>
+          <div 
+            className="absolute top-[73px] left-4 right-4 bg-white border border-slate-200 rounded-3xl p-6 flex flex-col space-y-3.5 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-305 pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => { setView('home'); setMobileMenuOpen(false); }}
+              className={`p-3.5 text-left font-black rounded-2xl text-[11px] tracking-wider ${view === 'home' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              Home
+            </button>
+            <button 
+              onClick={() => { setView('careers'); setMobileMenuOpen(false); }}
+              className={`p-3.5 text-left font-black rounded-2xl text-[11px] tracking-wider ${view === 'careers' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              Discoveries
+            </button>
+            <button 
+              onClick={() => { setView('chat'); setMobileMenuOpen(false); }}
+              className={`p-3.5 text-left font-black rounded-2xl text-[11px] tracking-wider ${view === 'chat' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              AI Counselor
+            </button>
+            <button 
+              onClick={() => { setView('vision'); setMobileMenuOpen(false); }}
+              className={`p-3.5 text-left font-black rounded-2xl text-[11px] tracking-wider ${view === 'vision' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              Vision Board
+            </button>
+            <button 
+              onClick={() => { setView('quiz'); setMobileMenuOpen(false); }}
+              className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 p-4 rounded-2xl font-black text-center shadow-lg hover:shadow-yellow-100"
+            >
+              Talent Quiz
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Detail Overlay */}
       {selectedCareer && (
         <CareerDetail 
           career={selectedCareer} 
           onClose={() => setSelectedCareer(null)} 
+          onStartChat={(career) => {
+            setActiveChatQuery(`Tell me about pursuing a career as a ${career.title} in Ghana. What are the top universities, typical study duration, key electives or streams, and early-career salaries of a ${career.title} in Ghana?`);
+            setView('chat');
+            setSelectedCareer(null);
+          }}
         />
       )}
 
@@ -103,58 +167,88 @@ const App: React.FC = () => {
           <div className="space-y-24">
             {/* Hero Section */}
             <div className="flex flex-col lg:flex-row items-center gap-16">
-              <div className="flex-1 space-y-8 text-center lg:text-left">
-                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-[10px] font-black uppercase tracking-[0.15em] border border-green-100 shadow-sm">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                  <span>Modern Ghanaian Careers</span>
+              <div className="flex-1 space-y-8 text-center lg:text-left relative p-8 md:p-12 rounded-[3rem] bg-slate-50/70 border border-slate-200/50 shadow-sm overflow-hidden group">
+                {/* Architectural Building Background */}
+                <div className="absolute inset-0 z-0 pointer-events-none transition-transform duration-700 group-hover:scale-105">
+                  <img 
+                    src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200"
+                    alt="Sleek architecture construction"
+                    className="w-full h-full object-cover opacity-10 mix-blend-overlay"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-slate-50/90 to-transparent"></div>
                 </div>
-                <h2 className="text-5xl md:text-8xl font-black text-slate-900 leading-[0.95] tracking-tight">
-                  Design your <br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-700 via-yellow-500 to-red-600">own legacy.</span>
-                </h2>
-                <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                  The Career Path helps Ghanaian students navigate the future. Explore 50+ professions, discover your inner talents, and find the right university to start your journey.
-                </p>
-                <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
-                  <button 
-                    onClick={() => setView('careers')}
-                    className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-2xl shadow-slate-300 active:scale-95"
-                  >
-                    Explore Professions
-                  </button>
-                  <button 
-                    onClick={() => setView('chat')}
-                    className="bg-white border-2 border-slate-200 text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:border-slate-800 transition-all active:scale-95"
-                  >
-                    Talk to AI Guide
-                  </button>
-                </div>
-                <div className="flex items-center justify-center lg:justify-start space-x-6 pt-6">
-                  <div className="flex -space-x-3">
-                    {studentAvatars.map((src, i) => (
-                      <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-200 overflow-hidden shadow-sm">
-                        <img src={src} className="w-full h-full object-cover" alt="Student Avatar" />
-                      </div>
-                    ))}
+                
+                <div className="relative z-10 space-y-8">
+                  <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-[10px] font-black uppercase tracking-[0.15em] border border-green-100 shadow-sm">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span>Modern Ghanaian Careers</span>
                   </div>
-                  <p className="text-sm font-bold text-slate-500">
-                    <span className="text-slate-900">5,000+</span> Ghanaian students guided
+                  <h2 className="text-5xl md:text-8xl font-black text-slate-900 leading-[0.95] tracking-tight">
+                    Design your <br/>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-700 via-yellow-500 to-red-600">own legacy.</span>
+                  </h2>
+                  <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                    The Career Path helps Ghanaian students navigate the future. Explore 50+ professions, discover your inner talents, and find the right university to start your journey.
                   </p>
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                    <button 
+                      onClick={() => setView('careers')}
+                      className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-2xl shadow-slate-300 active:scale-95"
+                    >
+                      Explore Professions
+                    </button>
+                    <button 
+                      onClick={() => setView('chat')}
+                      className="bg-white border-2 border-slate-200 text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:border-slate-800 transition-all active:scale-95"
+                    >
+                      Talk to AI Guide
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-center lg:justify-start space-x-6 pt-6">
+                    <div className="flex -space-x-3">
+                      {studentAvatars.map((src, i) => (
+                        <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-200 overflow-hidden shadow-sm">
+                          <img src={src} className="w-full h-full object-cover" alt="Student Avatar" />
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-sm font-bold text-slate-500">
+                      <span className="text-slate-900">5,000+</span> Ghanaian students guided
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="flex-1 relative w-full">
-                <div className="relative aspect-square md:aspect-auto md:h-[500px] w-full bg-slate-200 rounded-[3rem] overflow-hidden shadow-2xl">
+                <div className="relative aspect-square md:aspect-auto md:h-[500px] w-full bg-slate-200 rounded-[3rem] overflow-hidden shadow-2xl group/card">
                    <img 
-                    src="https://images.unsplash.com/photo-1531123414780-f74242c2b052?auto=format&fit=crop&q=80&w=800" 
-                    className="w-full h-full object-cover" 
-                    alt="Young professional in Ghana" 
+                    src="https://images.unsplash.com/photo-1503387762-592dea58ef23?auto=format&fit=crop&q=80&w=1200" 
+                    className="w-full h-full object-cover scale-100 group-hover/card:scale-105 duration-700 transition-transform ease-out" 
+                    alt="Magnificent building or skyscraper" 
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-                  <div className="absolute bottom-8 left-8 right-8 p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 transition-all duration-700">
-                    <p className="text-white font-black text-xl italic leading-tight animate-in fade-in slide-in-from-bottom-2 duration-1000">
-                      "{dailyProverb.text}"
-                    </p>
-                    <p className="text-white/60 text-sm mt-2 font-bold uppercase tracking-widest">— {dailyProverb.author}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent"></div>
+                  
+                  {/* Beautiful high-fidelity proverb container */}
+                  <div className="absolute bottom-6 left-6 right-6 p-6 md:p-8 bg-slate-950/70 backdrop-blur-xl rounded-[2rem] border border-white/10 shadow-2xl transition-all duration-300 hover:border-yellow-400/30 flex flex-col space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="inline-flex items-center space-x-2 px-3 py-1 bg-yellow-400/10 text-yellow-400 rounded-full text-[10px] font-black uppercase tracking-[0.12em] border border-yellow-400/20">
+                        <Sparkles className="w-3 h-3 text-yellow-400 animate-pulse" />
+                        <span>Daily Wisdom Badge</span>
+                      </div>
+                      <Quote className="w-8 h-8 text-white/15" />
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <p className="text-white font-bold text-lg md:text-xl leading-relaxed italic">
+                        "{dailyProverb.text}"
+                      </p>
+                      
+                      <div className="flex items-center space-x-3 pt-2 text-slate-300">
+                        <div className="w-5 h-0.5 bg-yellow-400/60"></div>
+                        <p className="text-[11px] font-black uppercase tracking-widest text-yellow-400">
+                          {dailyProverb.author}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -265,10 +359,19 @@ const App: React.FC = () => {
             <div className="text-center space-y-4">
               <h2 className="text-5xl font-black text-slate-900 tracking-tight">AI Career Counselor</h2>
               <p className="text-slate-500 text-lg font-medium">
-                Ask about BECE/WASSCE grades, choosing the right university, or searching for internship opportunities in Accra, Kumasi, and beyond.
+                Ask about choosing the right university, high-growth tracks, or searching for internship opportunities in Accra, Kumasi, and beyond.
               </p>
             </div>
-            <ChatInterface />
+            <ChatInterface 
+              initialQuery={activeChatQuery || undefined} 
+              onClearInitialQuery={() => setActiveChatQuery(null)} 
+            />
+          </div>
+        )}
+
+        {view === 'vision' && (
+          <div className="max-w-6xl mx-auto">
+            <ImageGenerator />
           </div>
         )}
 
@@ -308,6 +411,7 @@ const App: React.FC = () => {
               <li className="hover:text-white cursor-pointer transition-colors" onClick={() => setView('quiz')}>Talent Quiz</li>
               <li className="hover:text-white cursor-pointer transition-colors" onClick={() => setView('careers')}>Profession Library</li>
               <li className="hover:text-white cursor-pointer transition-colors" onClick={() => setView('chat')}>AI Counselor</li>
+              <li className="hover:text-white cursor-pointer transition-colors" onClick={() => setView('vision')}>Vision Board</li>
             </ul>
           </div>
 

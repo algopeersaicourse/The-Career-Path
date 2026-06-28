@@ -5,9 +5,10 @@ import { Career } from '../types';
 interface CareerDetailProps {
   career: Career;
   onClose: () => void;
+  onStartChat: (career: Career) => void;
 }
 
-const CareerDetail: React.FC<CareerDetailProps> = ({ career, onClose }) => {
+const CareerDetail: React.FC<CareerDetailProps> = ({ career, onClose, onStartChat }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl relative animate-in slide-in-from-bottom-8 duration-300">
@@ -105,7 +106,7 @@ const CareerDetail: React.FC<CareerDetailProps> = ({ career, onClose }) => {
               <p className="text-xl font-bold text-white">{career.growthPotential} Potential in Ghana</p>
             </div>
             <button 
-              onClick={onClose}
+              onClick={() => onStartChat(career)}
               className="w-full md:w-auto bg-yellow-400 text-slate-900 px-8 py-3 rounded-xl font-black hover:bg-yellow-500 transition-all shadow-lg active:scale-95"
             >
               Start Chat About This Path
