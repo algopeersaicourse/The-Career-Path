@@ -1,7 +1,6 @@
 <div align="center">
  
- ![image alt] (https://github.com/algopeersaicourse/The-Career-Path/blob/0d6baa1b73ebc4a615d44eba85e797520167e1d4/Screenshot%202026-06-28%20174755.png)
- 
+<img width="1200" height="475" alt="GHBanner" src="your permalink"/>
  </div>  
 
 
